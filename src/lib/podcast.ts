@@ -1,5 +1,4 @@
 import { del, put } from "@vercel/blob";
-import { generateText } from "ai";
 import { and, desc, eq } from "drizzle-orm";
 
 import { getDb } from "@/db";
@@ -8,6 +7,7 @@ import { serializePodcast } from "@/lib/serialize";
 
 import { synthesizePodcast } from "./elevenlabs";
 import { scrapeBlog } from "./firecrawl";
+import { generatePodcastScript } from "./openai";
 
 const SUMMARY_CHAR_LIMIT = 2000;
 
@@ -22,9 +22,8 @@ function clipForSpeech(text: string) {
 export async function createPodcastFromUrl(userId: string, inputUrl: string) {
   const { markdown, title } = await scrapeBlog(inputUrl);
 
-  const { text } = await generateText({
-    model: "openai/gpt-5.4",
-    prompt: [
+  const text = await generatePodcastScript(
+    [
       "You write spoken podcast scripts from blog posts.",
       "Create a concise, conversational episode (max 2000 characters).",
       "Capture the main points, keep a calm tone, and avoid markdown.",
@@ -34,7 +33,7 @@ export async function createPodcastFromUrl(userId: string, inputUrl: string) {
       "Article:",
       markdown.slice(0, 24000),
     ].join("\n\n"),
-  });
+  );
 
   const summary = clipForSpeech(text);
   if (!summary) {
