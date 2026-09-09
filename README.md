@@ -1,57 +1,51 @@
-## 📰 ➡️ 🎙️ Blog to Podcast Agent
-This is a Streamlit-based application that allows users to convert any blog post into a podcast. The app uses OpenAI's GPT-4 model for summarization, Firecrawl for scraping blog content, and ElevenLabs API for generating audio. Users simply input a blog URL, and the app will generate a podcast episode based on the blog.
+# Fern
 
-## Features
+Turn any public blog into a calm spoken episode. Fern scrapes the page, writes a conversational summary, voices it, stores the audio in Vercel Blob, and keeps your history in Neon.
 
-- **Blog Scraping**: Scrapes the full content of any public blog URL using Firecrawl API.
+## Stack
 
-- **Summary Generation**: Creates an engaging and concise summary of the blog (within 2000 characters) using OpenAI GPT-4.
+- Next.js (App Router, TypeScript)
+- Tailwind CSS + shadcn/ui
+- Clerk (Google sign-in)
+- Neon Postgres
+- Vercel Blob
+- Vercel AI Gateway for summarization
+- Firecrawl for scraping
+- ElevenLabs for speech
 
-- **Podcast Generation**: Converts the summary into an audio podcast using the ElevenLabs voice API.
+## Local setup
 
-- **API Key Integration**: Requires OpenAI, Firecrawl, and ElevenLabs API keys loaded from a `.env` file.
+1. Copy environment variables:
 
-## Setup
-
-### Requirements 
-
-1. **API Keys**:
-    - **OpenAI API Key**: Sign up at OpenAI to obtain your API key.
-
-    - **ElevenLabs API Key**: Get your ElevenLabs API key from ElevenLabs.
-
-    - **Firecrawl API Key**: Get your Firecrawl API key from Firecrawl.
-
-2. **Python 3.8+**: Ensure you have Python 3.8 or higher installed.
-
-### Installation
-1. Clone this repository:
    ```bash
-   git clone https://github.com/1337Impact/ai_blog_to_podcast_agent
-   cd ai_blog_to_podcast_agent
+   cp .env.example .env.local
    ```
 
-2. Install the required Python packages:
+2. Provision services (preferred: Vercel Marketplace after `vercel link`):
+
    ```bash
-   pip install -r requirements.txt
+   vercel integration add neon
+   vercel blob store add
+   vercel integration add clerk
+   vercel env pull .env.local --yes
    ```
 
-3. Create a `.env` file from the example and add your API keys:
-   ```bash
-   cp .env.example .env
-   ```
-   Then edit `.env` and set `OPENAI_API_KEY`, `ELEVENLABS_API_KEY`, and `FIRECRAWL_API_KEY`.
+3. In the Clerk dashboard, enable **Google** as the only social connection.
 
-### Running the App
+4. Add `FIRECRAWL_API_KEY` and `ELEVENLABS_API_KEY` to Vercel env (and `.env.local`).
 
-1. Start the Streamlit app:
+5. Push the database schema:
+
    ```bash
-   streamlit run blog_to_podcast_agent.py
+   npm run db:push
    ```
 
-2. In the app interface:
-    - Input the blog URL you want to convert.
+6. Start the app:
 
-    - Click "🎙️ Generate Podcast".
+   ```bash
+   npm run dev
+   ```
 
-    - Listen to the generated podcast or download it.
+After Google sign-in, you are sent to `/app` to create podcasts and manage history. History deletions ask for confirmation before removing the Neon row and Blob file.
+
+Unauthenticated `POST /api/podcasts` requests return `{ "error": "Unauthenticated" }` with status `401`.
