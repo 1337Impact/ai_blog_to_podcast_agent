@@ -17,9 +17,12 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Fern — Blog to podcast",
+  title: {
+    default: "Fern — Blog to podcast",
+    template: "%s · Fern",
+  },
   description:
-    "Turn any public blog into a calm spoken episode. Sign in with Google, grow a podcast, and keep a quiet archive.",
+    "Paste a public blog, essay, or document URL. Fern reads the page, writes a calm spoken summary, and keeps the episode in your archive.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
