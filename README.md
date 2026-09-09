@@ -6,7 +6,7 @@ Turn any public blog into a calm spoken episode. Fern scrapes the page, writes a
 
 - Next.js (App Router, TypeScript)
 - Tailwind CSS + shadcn/ui
-- Clerk (Google sign-in)
+- Google OAuth via Auth.js
 - Neon Postgres
 - Vercel Blob
 - Vercel AI Gateway for summarization
@@ -21,18 +21,26 @@ Turn any public blog into a calm spoken episode. Fern scrapes the page, writes a
    cp .env.example .env.local
    ```
 
-2. Provision services (preferred: Vercel Marketplace after `vercel link`):
+2. Provision storage (preferred: Vercel Marketplace after `vercel link`):
 
    ```bash
    vercel integration add neon
    vercel blob store add
-   vercel integration add clerk
    vercel env pull .env.local --yes
    ```
 
-3. In the Clerk dashboard, enable **Google** as the only social connection.
+3. Create a Google OAuth **Web application** client and set:
 
-4. Add `FIRECRAWL_API_KEY` and `ELEVENLABS_API_KEY` to Vercel env (and `.env.local`).
+   - `AUTH_GOOGLE_ID`
+   - `AUTH_GOOGLE_SECRET`
+   - `AUTH_SECRET` (any 32+ character random string)
+
+   Authorized redirect URIs:
+
+   - `http://localhost:3000/api/auth/callback/google`
+   - `https://<your-production-domain>/api/auth/callback/google`
+
+4. Add `FIRECRAWL_API_KEY` and `ELEVENLABS_API_KEY`.
 
 5. Push the database schema:
 

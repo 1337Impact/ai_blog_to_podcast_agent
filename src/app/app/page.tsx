@@ -1,28 +1,31 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
+import { auth } from "@/auth";
 import { FernFrond } from "@/components/botanical";
 import { SoftBlob } from "@/components/blobs";
 import { SiteHeader } from "@/components/site-header";
 import { StudioApp } from "@/components/studio-app";
 import { listPodcastsForUser } from "@/lib/podcast";
-import { upsertUserFromClerk } from "@/lib/users";
+import { upsertUser } from "@/lib/users";
 
 export const dynamic = "force-dynamic";
 
 export default async function AppPage() {
-  const { userId } = await auth();
-  if (!userId) {
+  const session = await auth();
+  const user = session?.user;
+
+  if (!user?.id || !user.email) {
     redirect("/sign-in");
   }
 
-  const user = await currentUser();
-  if (!user) {
-    redirect("/sign-in");
-  }
-
-  await upsertUserFromClerk(user);
+  await upsertUser({
+    id: user.id,
+    email: user.email,
+    name: user.name ?? null,
+    imageUrl: user.image ?? null,
+  });
   const history = await listPodcastsForUser(user.id);
+  const firstName = user.name?.split(" ")[0];
 
   return (
     <div className="relative min-h-full overflow-hidden">
@@ -35,7 +38,7 @@ export default async function AppPage() {
       <SiteHeader compact />
       <main className="relative z-10 mx-auto w-full max-w-3xl px-6 pb-24 pt-4 sm:px-10">
         <p className="mb-2 text-sm text-muted-foreground">
-          Welcome back{user.firstName ? `, ${user.firstName}` : ""}.
+          Welcome back{firstName ? `, ${firstName}` : ""}.
         </p>
         <StudioApp initialPodcasts={history} />
       </main>

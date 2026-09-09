@@ -2,12 +2,11 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import {
-  getAuthenticatedClerkUser,
-  getAuthenticatedUserId,
+  getAuthenticatedUser,
   unauthenticatedResponse,
 } from "@/lib/auth";
 import { createPodcastFromUrl, listPodcastsForUser } from "@/lib/podcast";
-import { upsertUserFromClerk } from "@/lib/users";
+import { upsertUser } from "@/lib/users";
 
 export const maxDuration = 300;
 
@@ -16,13 +15,13 @@ const createPodcastSchema = z.object({
 });
 
 export async function GET() {
-  const userId = await getAuthenticatedUserId();
-  if (!userId) {
+  const user = await getAuthenticatedUser();
+  if (!user) {
     return unauthenticatedResponse();
   }
 
   try {
-    const history = await listPodcastsForUser(userId);
+    const history = await listPodcastsForUser(user.id);
     return NextResponse.json({ podcasts: history });
   } catch (error) {
     console.error("Failed to load podcast history", error);
@@ -34,13 +33,8 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const userId = await getAuthenticatedUserId();
-  if (!userId) {
-    return unauthenticatedResponse();
-  }
-
-  const clerkUser = await getAuthenticatedClerkUser();
-  if (!clerkUser) {
+  const user = await getAuthenticatedUser();
+  if (!user) {
     return unauthenticatedResponse();
   }
 
@@ -60,8 +54,8 @@ export async function POST(request: Request) {
   }
 
   try {
-    await upsertUserFromClerk(clerkUser);
-    const podcast = await createPodcastFromUrl(userId, parsed.data.url);
+    await upsertUser(user);
+    const podcast = await createPodcastFromUrl(user.id, parsed.data.url);
     return NextResponse.json({ podcast }, { status: 201 });
   } catch (error) {
     console.error("Failed to create podcast", error);

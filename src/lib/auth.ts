@@ -1,16 +1,25 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
 export function unauthenticatedResponse() {
   return NextResponse.json({ error: "Unauthenticated" }, { status: 401 });
 }
 
-export async function getAuthenticatedUserId() {
-  const { userId } = await auth();
-  return userId;
+export async function getAuthenticatedUser() {
+  const session = await auth();
+  if (!session?.user?.id || !session.user.email) {
+    return null;
+  }
+
+  return {
+    id: session.user.id,
+    email: session.user.email,
+    name: session.user.name ?? null,
+    imageUrl: session.user.image ?? null,
+  };
 }
 
-export async function getAuthenticatedClerkUser() {
-  const user = await currentUser();
-  return user;
+export async function getAuthenticatedUserId() {
+  const user = await getAuthenticatedUser();
+  return user?.id ?? null;
 }

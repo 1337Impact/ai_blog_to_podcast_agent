@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useSignIn } from "@clerk/nextjs";
+import { signIn } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 
@@ -29,27 +28,23 @@ function GoogleMark() {
   );
 }
 
-function GoogleSignInReady({ label }: { label: string }) {
-  const { signIn, fetchStatus } = useSignIn();
+export function GoogleSignInButton({
+  label = "Continue with Google",
+}: {
+  label?: string;
+}) {
   const [error, setError] = useState<string | null>(null);
-  const busy = fetchStatus === "fetching";
+  const [busy, setBusy] = useState(false);
 
   async function handleClick() {
     setError(null);
-
-    if (!signIn) {
-      setError("Google sign-in is not ready yet.");
-      return;
-    }
+    setBusy(true);
 
     try {
-      await signIn.sso({
-        strategy: "oauth_google",
-        redirectUrl: "/app",
-        redirectCallbackUrl: "/sign-in/sso-callback",
-      });
+      await signIn("google", { callbackUrl: "/app" });
     } catch (cause) {
       console.error(cause);
+      setBusy(false);
       setError("Could not start Google sign-in. Please try again.");
     }
   }
@@ -73,20 +68,4 @@ function GoogleSignInReady({ label }: { label: string }) {
       ) : null}
     </div>
   );
-}
-
-export function GoogleSignInButton({
-  label = "Continue with Google",
-}: {
-  label?: string;
-}) {
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
-    return (
-      <Button asChild size="lg" className="h-12 rounded-full px-6 text-base">
-        <Link href="/sign-in">{label}</Link>
-      </Button>
-    );
-  }
-
-  return <GoogleSignInReady label={label} />;
 }

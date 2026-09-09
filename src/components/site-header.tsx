@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SignOutButton, useUser } from "@clerk/nextjs";
+import { signOut, useSession } from "next-auth/react";
 
 import { FernFrond } from "@/components/botanical";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
@@ -17,29 +17,32 @@ function Brand() {
   );
 }
 
-function ClerkHeader({ compact }: { compact: boolean }) {
-  const { isLoaded, isSignedIn, user } = useUser();
+export function SiteHeader({ compact = false }: { compact?: boolean }) {
+  const { data: session, status } = useSession();
+  const user = session?.user;
   const initials =
-    user?.firstName?.[0] ?? user?.emailAddresses[0]?.emailAddress[0] ?? "F";
+    user?.name?.[0] ?? user?.email?.[0] ?? "F";
 
   return (
     <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 sm:px-10">
       <Brand />
       <nav className="flex items-center gap-3">
-        {!isLoaded ? (
+        {status === "loading" ? (
           <div className="h-9 w-24 rounded-full bg-muted" />
-        ) : isSignedIn ? (
+        ) : user ? (
           <>
             <Button asChild variant="ghost" className="rounded-full">
               <Link href="/app">Studio</Link>
             </Button>
-            <SignOutButton>
-              <Button variant="outline" className="rounded-full">
-                Sign out
-              </Button>
-            </SignOutButton>
+            <Button
+              variant="outline"
+              className="rounded-full"
+              onClick={() => signOut({ callbackUrl: "/" })}
+            >
+              Sign out
+            </Button>
             <Avatar className="h-9 w-9">
-              <AvatarImage src={user?.imageUrl} alt={user?.fullName ?? "You"} />
+              <AvatarImage src={user.image ?? undefined} alt={user.name ?? "You"} />
               <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
             </Avatar>
           </>
@@ -53,19 +56,4 @@ function ClerkHeader({ compact }: { compact: boolean }) {
       </nav>
     </header>
   );
-}
-
-export function SiteHeader({ compact = false }: { compact?: boolean }) {
-  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) {
-    return (
-      <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 sm:px-10">
-        <Brand />
-        <Button asChild variant="ghost" className="rounded-full">
-          <Link href="/sign-in">Sign in</Link>
-        </Button>
-      </header>
-    );
-  }
-
-  return <ClerkHeader compact={compact} />;
 }
