@@ -136,4 +136,10 @@
   audio {
     accent-color: var(--primary);
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    html:not(.lenis) {
+      scroll-behavior: auto;
+    }
+  }
 }
