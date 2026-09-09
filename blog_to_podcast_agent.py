@@ -1,35 +1,41 @@
 import os
-from uuid import uuid4
 from agno.agent import Agent
 from agno.run.agent import RunOutput
 from agno.models.openai import OpenAIChat
 from agno.tools.firecrawl import FirecrawlTools
+from dotenv import load_dotenv
 from elevenlabs import ElevenLabs
 import streamlit as st
+
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY")
+FIRECRAWL_API_KEY = os.getenv("FIRECRAWL_API_KEY")
+API_KEYS_CONFIGURED = all([OPENAI_API_KEY, ELEVENLABS_API_KEY, FIRECRAWL_API_KEY])
 
 # Streamlit Setup
 st.set_page_config(page_title="📰 ➡️ 🎙️ Blog to Podcast", page_icon="🎙️")
 st.title("📰 ➡️ 🎙️ Blog to Podcast Agent")
 
-# API Keys (Runtime Input)
-st.sidebar.header("🔑 API Keys")
-openai_key = st.sidebar.text_input("OpenAI API Key", type="password")
-elevenlabs_key = st.sidebar.text_input("ElevenLabs API Key", type="password")
-firecrawl_key = st.sidebar.text_input("Firecrawl API Key", type="password")
+if not API_KEYS_CONFIGURED:
+    st.error(
+        "Missing API keys. Copy `.env.example` to `.env` and set "
+        "OPENAI_API_KEY, ELEVENLABS_API_KEY, and FIRECRAWL_API_KEY."
+    )
 
 # Blog URL Input
 url = st.text_input("Enter Blog URL:", "")
 
 # Generate Button
-if st.button("🎙️ Generate Podcast", disabled=not all([openai_key, elevenlabs_key, firecrawl_key])):
+if st.button("🎙️ Generate Podcast", disabled=not API_KEYS_CONFIGURED):
     if not url.strip():
         st.warning("Please enter a blog URL")
     else:
         with st.spinner("Scraping blog and generating podcast..."):
             try:
-                # Set API keys
-                os.environ["OPENAI_API_KEY"] = openai_key
-                os.environ["FIRECRAWL_API_KEY"] = firecrawl_key
+                os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+                os.environ["FIRECRAWL_API_KEY"] = FIRECRAWL_API_KEY
                 
                 # Create agent for scraping and summarization
                 agent = Agent(
@@ -48,7 +54,7 @@ if st.button("🎙️ Generate Podcast", disabled=not all([openai_key, elevenlab
                 
                 if summary:
                     # Initialize ElevenLabs client and generate audio
-                    client = ElevenLabs(api_key=elevenlabs_key)
+                    client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
                     
                     # Generate audio using text_to_speech.convert
                     audio_generator = client.text_to_speech.convert(

@@ -9,7 +9,7 @@ This is a Streamlit-based application that allows users to convert any blog post
 
 - **Podcast Generation**: Converts the summary into an audio podcast using the ElevenLabs voice API.
 
-- **API Key Integration**: Requires OpenAI, Firecrawl, and ElevenLabs API keys to function, entered securely via the sidebar.
+- **API Key Integration**: Requires OpenAI, Firecrawl, and ElevenLabs API keys loaded from a `.env` file.
 
 ## Setup
 
@@ -35,6 +35,13 @@ This is a Streamlit-based application that allows users to convert any blog post
    ```bash
    pip install -r requirements.txt
    ```
+
+3. Create a `.env` file from the example and add your API keys:
+   ```bash
+   cp .env.example .env
+   ```
+   Then edit `.env` and set `OPENAI_API_KEY`, `ELEVENLABS_API_KEY`, and `FIRECRAWL_API_KEY`.
+
 ### Running the App
 
 1. Start the Streamlit app:
@@ -43,8 +50,6 @@ This is a Streamlit-based application that allows users to convert any blog post
    ```
 
 2. In the app interface:
-    - Enter your OpenAI, ElevenLabs, and Firecrawl API keys in the sidebar.
-
     - Input the blog URL you want to convert.
 
     - Click "🎙️ Generate Podcast".
