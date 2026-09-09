@@ -61,53 +61,84 @@ function SourceMark({ title }: { title: string }) {
       aria-hidden="true"
     >
       {title === "Blogs" ? (
-        <path
-          d="M8 30c8-2 14-10 22-10s12 8 26 6"
-          stroke="currentColor"
-          strokeWidth="1.2"
-          strokeLinecap="round"
-        />
+        <>
+          <path
+            d="M10 28c10-4 16-16 26-16 8 0 12 8 18 10"
+            stroke="currentColor"
+            strokeWidth="1.15"
+            strokeLinecap="round"
+          />
+          <ellipse
+            cx="22"
+            cy="16"
+            rx="7"
+            ry="10"
+            transform="rotate(-28 22 16)"
+            stroke="currentColor"
+            strokeWidth="1.05"
+          />
+        </>
       ) : null}
       {title === "Essays" ? (
         <>
           <path
-            d="M14 12h28M14 20h22M14 28h16"
+            d="M14 12h30M14 20h24M14 28h18"
             stroke="currentColor"
-            strokeWidth="1.2"
+            strokeWidth="1.15"
+            strokeLinecap="round"
+          />
+          <path
+            d="M50 10c4 4 4 10 0 14"
+            stroke="currentColor"
+            strokeWidth="1"
             strokeLinecap="round"
           />
         </>
       ) : null}
       {title === "PDFs on the web" ? (
-        <rect
-          x="16"
-          y="6"
-          width="28"
-          height="28"
-          rx="8"
-          stroke="currentColor"
-          strokeWidth="1.2"
-        />
+        <>
+          <rect
+            x="18"
+            y="6"
+            width="24"
+            height="28"
+            rx="6"
+            stroke="currentColor"
+            strokeWidth="1.15"
+          />
+          <path
+            d="M24 16h12M24 22h9"
+            stroke="currentColor"
+            strokeWidth="1"
+            strokeLinecap="round"
+          />
+        </>
       ) : null}
       {title === "Docs and notes" ? (
         <>
           <rect
-            x="12"
-            y="10"
-            width="24"
-            height="22"
-            rx="5"
+            x="10"
+            y="12"
+            width="22"
+            height="20"
+            rx="4"
             stroke="currentColor"
-            strokeWidth="1.15"
+            strokeWidth="1.1"
           />
           <rect
             x="22"
             y="6"
-            width="24"
-            height="22"
-            rx="5"
+            width="22"
+            height="20"
+            rx="4"
             stroke="currentColor"
-            strokeWidth="1.15"
+            strokeWidth="1.1"
+          />
+          <path
+            d="M28 14h8M28 18h6"
+            stroke="currentColor"
+            strokeWidth="0.95"
+            strokeLinecap="round"
           />
         </>
       ) : null}

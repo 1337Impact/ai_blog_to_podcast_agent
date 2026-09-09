@@ -9,7 +9,7 @@ export function LandingHero() {
   return (
     <section
       aria-labelledby="hero-heading"
-      className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 pb-20 pt-8 text-center sm:px-10 sm:pt-16 sm:pb-28"
+      className="relative z-10 mx-auto flex max-w-4xl flex-col items-center px-6 pb-24 pt-8 text-center sm:px-10 sm:pt-16 sm:pb-32"
     >
       <div className="hero-copy flex flex-col items-center gap-7">
         <p className="text-sm tracking-[0.28em] text-muted-foreground uppercase">
