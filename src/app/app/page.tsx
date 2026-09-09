@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { FernFrond } from "@/components/botanical";
@@ -11,6 +11,11 @@ import { upsertUserFromClerk } from "@/lib/users";
 export const dynamic = "force-dynamic";
 
 export default async function AppPage() {
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
   const user = await currentUser();
   if (!user) {
     redirect("/sign-in");

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { SignedIn, SignedOut, SignOutButton, useUser } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 
 import { FernFrond } from "@/components/botanical";
 import { GoogleSignInButton } from "@/components/google-sign-in-button";
@@ -18,7 +18,7 @@ function Brand() {
 }
 
 function ClerkHeader({ compact }: { compact: boolean }) {
-  const { user } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
   const initials =
     user?.firstName?.[0] ?? user?.emailAddresses[0]?.emailAddress[0] ?? "F";
 
@@ -26,29 +26,30 @@ function ClerkHeader({ compact }: { compact: boolean }) {
     <header className="relative z-10 mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-6 sm:px-10">
       <Brand />
       <nav className="flex items-center gap-3">
-        <SignedOut>
-          {compact ? (
+        {!isLoaded ? (
+          <div className="h-9 w-24 rounded-full bg-muted" />
+        ) : isSignedIn ? (
+          <>
             <Button asChild variant="ghost" className="rounded-full">
-              <Link href="/sign-in">Sign in</Link>
+              <Link href="/app">Studio</Link>
             </Button>
-          ) : (
-            <GoogleSignInButton label="Sign in with Google" />
-          )}
-        </SignedOut>
-        <SignedIn>
+            <SignOutButton>
+              <Button variant="outline" className="rounded-full">
+                Sign out
+              </Button>
+            </SignOutButton>
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={user?.imageUrl} alt={user?.fullName ?? "You"} />
+              <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
+            </Avatar>
+          </>
+        ) : compact ? (
           <Button asChild variant="ghost" className="rounded-full">
-            <Link href="/app">Studio</Link>
+            <Link href="/sign-in">Sign in</Link>
           </Button>
-          <SignOutButton>
-            <Button variant="outline" className="rounded-full">
-              Sign out
-            </Button>
-          </SignOutButton>
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={user?.imageUrl} alt={user?.fullName ?? "You"} />
-            <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
-          </Avatar>
-        </SignedIn>
+        ) : (
+          <GoogleSignInButton label="Sign in with Google" />
+        )}
       </nav>
     </header>
   );
