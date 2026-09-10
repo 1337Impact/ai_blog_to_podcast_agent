@@ -61,33 +61,6 @@ export const useCases = [
   },
 ] as const;
 
-export const features = [
-  {
-    title: "One Google account",
-    body: "Sign in and you are in the studio. No extra passwords to tend.",
-  },
-  {
-    title: "A spoken summary, not a dump",
-    body: "Fern writes a conversational script, then clips it to a length that is comfortable to hear.",
-  },
-  {
-    title: "Your archive stays yours",
-    body: "Episodes are stored for you. Delete one and the recording leaves with it.",
-  },
-  {
-    title: "Public pages only",
-    body: "If you can open the URL in a browser, you can ask Fern to listen to it.",
-  },
-  {
-    title: "A minute, not an afternoon",
-    body: "Scraping, writing, and voicing usually finish while you stay on the page.",
-  },
-  {
-    title: "A calm studio",
-    body: "No feed, no recommendations. Just the URL field and the episodes you grew.",
-  },
-] as const;
-
 export const faqs = [
   {
     question: "What can I turn into an episode?",
@@ -127,6 +100,4 @@ export const sampleEpisode = {
   date: "Sep 4",
   summary:
     "The piece argues that a walk without an errand is still useful: it loosens attention, lets stray thoughts arrive, and returns you to the page a little kinder than you left it.",
-  script:
-    "Today we sit with a short essay about walking without a destination. The writer is not selling a habit. They are asking what happens when you leave the house with no errand and no podcast already playing. The claim is modest. A walk like that loosens attention. Thoughts that would not survive a to-do list are allowed to arrive. And when you come back to the page, you are often a little kinder than when you left.",
 } as const;
